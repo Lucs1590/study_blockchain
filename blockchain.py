@@ -66,6 +66,7 @@ class Blockchain(object):
 
 
 def main():
+    app = Flask(__name__)
     bc = Blockchain()
     bc.create_block(1, "0")
 
