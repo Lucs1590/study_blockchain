@@ -79,7 +79,7 @@ class Blockchain(object):
 
         while check_proof == False:
             hash_operation = hashlib.sha256(
-                str(new_proof**2 - prev_proof**2)).hexdigest()
+                str(new_proof**2 - prev_proof**2).encode()).hexdigest()
 
             (check_proof, new_proof) = (
                 True, new_proof) if hash_operation[:4] == "0000" else (False, new_proof + 1)
