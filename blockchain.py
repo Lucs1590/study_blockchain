@@ -9,12 +9,13 @@ Created on Sun Jun 28 22:31:42 2020
 import datetime
 import hashlib
 import json
-from flask import Flask, jsonify
+from flask import Flask, Response, jsonify
 
 
 class Blockchain(object):
     def __init__(self):
         self.chain = []
+        self.create_block(1, "0")
 
     def create_block(self, proof, prev_hash):
         block = {
@@ -65,10 +66,36 @@ class Blockchain(object):
         return True
 
 
+class EndpointAction(object):
+
+    def __init__(self, action):
+        self.action = action
+        self.response = Response(status=200, headers={})
+
+    def __call__(self, *args):
+        self.action()
+        return self.response
+
+
+class FlaskAppWrapper(object):
+    app = None
+
+    def __init__(self, name):
+        self.app = Flask(name)
+
+    def run(self):
+        self.app.run()
+
+    def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None):
+        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler))
+
+
 def main():
-    app = Flask(__name__)
+    flask_wrapper = FlaskAppWrapper(__name__)
+    flask_wrapper.add_endpoint(
+        endpoint='/ad', endpoint_name='ad')
+    flask_wrapper.run()
     bc = Blockchain()
-    bc.create_block(1, "0")
 
 
 if __name__ == "__main__":
