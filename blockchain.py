@@ -116,7 +116,7 @@ def main():
     flask_wrapper.add_endpoint(
         endpoint='/mine_block',
         endpoint_name='mine_block',
-        handler=request.mine_block()
+        handler=request.mine_block
     )
     flask_wrapper.run()
 
