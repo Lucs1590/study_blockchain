@@ -12,6 +12,49 @@ import json
 from flask import Flask, Response, jsonify
 
 
+class EndpointAction(object):
+
+    def __init__(self, action):
+        self.action = action
+        self.response = Response(status=200, headers={})
+
+    def __call__(self, *args):
+        self.action()
+        return self.response
+
+
+class FlaskAppWrapper(object):
+    app = None
+
+    def __init__(self, name):
+        self.app = Flask(name)
+
+    def run(self):
+        self.app.run()
+
+    def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None):
+        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler))
+
+
+class Requests(object):
+    def __init__(self):
+        self.bc = Blockchain()
+
+    def mine_block(self):
+        prev_block = self.bc.get_prev_block()
+        proff = self.bc.proof_of_work(prev_block["proof"])
+        prev_hash = self.bc.hash(prev_block)
+
+        block = self.bc.create_block(proff, prev_hash)
+
+        response = {
+            "message": "Mined block!",
+            "block": block
+        }
+
+        return jsonify(response), 200
+
+
 class Blockchain(object):
     def __init__(self):
         self.chain = []
@@ -66,36 +109,16 @@ class Blockchain(object):
         return True
 
 
-class EndpointAction(object):
-
-    def __init__(self, action):
-        self.action = action
-        self.response = Response(status=200, headers={})
-
-    def __call__(self, *args):
-        self.action()
-        return self.response
-
-
-class FlaskAppWrapper(object):
-    app = None
-
-    def __init__(self, name):
-        self.app = Flask(name)
-
-    def run(self):
-        self.app.run()
-
-    def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None):
-        self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler))
-
-
 def main():
     flask_wrapper = FlaskAppWrapper(__name__)
+    request = Requests()
+
     flask_wrapper.add_endpoint(
-        endpoint='/ad', endpoint_name='ad')
+        endpoint='/mine_block',
+        endpoint_name='mine_block',
+        handler=request.mine_block()
+    )
     flask_wrapper.run()
-    bc = Blockchain()
 
 
 if __name__ == "__main__":
