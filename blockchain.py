@@ -57,6 +57,13 @@ class Requests(object):
 
         return json.dumps(response)
 
+    def get_chain(self):
+        response = {
+            "chain": self.bc.chain,
+            "lenght": len(self.bc.chain)
+        }
+        return json.dumps(response)
+
 
 class Blockchain(object):
     def __init__(self):
@@ -120,6 +127,11 @@ def main():
         endpoint='/mine_block',
         endpoint_name='mine_block',
         handler=request.mine_block
+    )
+    flask_wrapper.add_endpoint(
+        endpoint='/get_chain',
+        endpoint_name='get_chain',
+        handler=request.get_chain
     )
     flask_wrapper.run()
 
