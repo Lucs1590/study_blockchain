@@ -19,7 +19,7 @@ class EndpointAction(object):
         self.response = Response(status=200, headers={})
 
     def __call__(self, *args):
-        self.action()
+        self.response.data = self.action()
         return self.response
 
 
@@ -49,10 +49,13 @@ class Requests(object):
 
         response = {
             "message": "Mined block!",
-            "block": block
+            "index": block["index"],
+            "timestamp": block["timestamp"],
+            "proof": block["proof"],
+            "prev_hash": block["prev_hash"]
         }
 
-        return jsonify(response), 200
+        return json.dumps(response)
 
 
 class Blockchain(object):
