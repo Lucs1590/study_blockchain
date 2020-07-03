@@ -64,6 +64,11 @@ class Requests(object):
         }
         return json.dumps(response)
 
+    def is_valid(self):
+        response = {"message": "block valid!"} if self.bc.is_chain_valid(
+            self.bc.chain) else {"message": "block invalid!"}
+        return json.dumps(response)
+
 
 class Blockchain(object):
     def __init__(self):
@@ -132,6 +137,11 @@ def main():
         endpoint='/get_chain',
         endpoint_name='get_chain',
         handler=request.get_chain
+    )
+    flask_wrapper.add_endpoint(
+        endpoint='/is_valid',
+        endpoint_name='is_valid',
+        handler=request.is_valid
     )
     flask_wrapper.run()
 
