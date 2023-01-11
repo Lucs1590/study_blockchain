@@ -86,8 +86,9 @@ class Blockchain(object):
             "timestamp": str(datetime.datetime.now()),
             "proof": proof,
             "prev_hash": prev_hash,
-            "transactions" : self.transactions
+            "transactions": self.transactions
         }
+        self.transactions = []
         self.chain.append(block)
         return block
 
@@ -128,6 +129,15 @@ class Blockchain(object):
             prev_block = curr_block
             i += 1
         return True
+
+    def add_transaction(self, sender, reciver, amount):
+        self.transactions.append({
+            "sender": sender,
+            "reciver": reciver,
+            "amount": amount
+        })
+        prev_block = self.get_prev_block()
+        return prev_block["index"] + 1
 
 
 def main():
