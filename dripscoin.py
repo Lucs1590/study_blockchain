@@ -142,22 +142,22 @@ class Blockchain(object):
 
 def main():
     flask_wrapper = FlaskAppWrapper(__name__)
-    request = Requests()
+    request_service = Requests()
 
     flask_wrapper.add_endpoint(
         endpoint='/mine_block',
         endpoint_name='mine_block',
-        handler=request.mine_block
+        handler=request_service.mine_block
     )
     flask_wrapper.add_endpoint(
         endpoint='/get_chain',
         endpoint_name='get_chain',
-        handler=request.get_chain
+        handler=request_service.get_chain
     )
     flask_wrapper.add_endpoint(
         endpoint='/is_valid',
         endpoint_name='is_valid',
-        handler=request.is_valid
+        handler=request_service.is_valid
     )
     flask_wrapper.run()
 
