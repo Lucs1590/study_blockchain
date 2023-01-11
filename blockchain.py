@@ -9,7 +9,7 @@ Created on Sun Jun 28 22:31:42 2020
 import datetime
 import hashlib
 import json
-from flask import Flask, Response, jsonify
+from flask import Flask, Response
 
 
 class EndpointAction(object):
@@ -38,14 +38,14 @@ class FlaskAppWrapper(object):
 
 class Requests(object):
     def __init__(self):
-        self.bc = Blockchain()
+        self.blockchain = Blockchain()
 
     def mine_block(self):
-        prev_block = self.bc.get_prev_block()
-        proff = self.bc.proof_of_work(prev_block["proof"])
-        prev_hash = self.bc.hash(prev_block)
+        prev_block = self.blockchain.get_prev_block()
+        proff = self.blockchain.proof_of_work(prev_block["proof"])
+        prev_hash = self.blockchain.hash(prev_block)
 
-        block = self.bc.create_block(proff, prev_hash)
+        block = self.blockchain.create_block(proff, prev_hash)
 
         response = {
             "message": "Mined block!",
@@ -59,14 +59,14 @@ class Requests(object):
 
     def get_chain(self):
         response = {
-            "chain": self.bc.chain,
-            "lenght": len(self.bc.chain)
+            "chain": self.blockchain.chain,
+            "lenght": len(self.blockchain.chain)
         }
         return json.dumps(response)
 
     def is_valid(self):
-        response = {"message": "block valid!"} if self.bc.is_chain_valid(
-            self.bc.chain) else {"message": "block invalid!"}
+        response = {"message": "block valid!"} if self.blockchain.is_chain_valid(
+            self.blockchain.chain) else {"message": "block invalid!"}
         return json.dumps(response)
 
 
@@ -92,7 +92,7 @@ class Blockchain(object):
         new_proof = 1
         check_proof = False
 
-        while check_proof == False:
+        while check_proof is False:
             hash_operation = hashlib.sha256(
                 str(new_proof**2 - prev_proof**2).encode()).hexdigest()
 
