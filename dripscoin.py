@@ -43,11 +43,18 @@ class FlaskAppWrapper(object):
 class Requests(object):
     def __init__(self):
         self.blockchain = Blockchain()
+        self.node_address = str(uuid4()).replace("-", "")
 
     def mine_block(self):
         prev_block = self.blockchain.get_prev_block()
         proff = self.blockchain.proof_of_work(prev_block["proof"])
         prev_hash = self.blockchain.hash(prev_block)
+
+        self.blockchain.add_transaction(
+            sender=self.node_address,
+            reciver="Lucs1590",
+            amount=1
+        )
 
         block = self.blockchain.create_block(proff, prev_hash)
 
@@ -56,7 +63,8 @@ class Requests(object):
             "index": block["index"],
             "timestamp": block["timestamp"],
             "proof": block["proof"],
-            "prev_hash": block["prev_hash"]
+            "prev_hash": block["prev_hash"],
+            "transactions": block["transactions"]
         }
 
         return json.dumps(response)
