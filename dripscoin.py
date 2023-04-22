@@ -96,7 +96,7 @@ class Requests(object):
                 "message": f"This transaction will be added to block {index}"
             }
         return json.dumps(response)
-    
+
     def connect_node(self):
         json_request = request.get_json()
         nodes = json_request.get("nodes")
@@ -108,6 +108,14 @@ class Requests(object):
             "message": "All nodes connected",
             "total_nodes": list(self.blockchain.node)
         }
+        return json.dumps(response)
+
+    def replace_chain(self):
+        is_chain_replaced = self.blockchain.replace_chain()
+        response = {
+            "chain": self.blockchain.chain
+        }
+        response["message"] = "Chain replaced" if is_chain_replaced else "Chain not replaced"
         return json.dumps(response)
 
 
@@ -197,8 +205,9 @@ class Blockchain(object):
 
         if longest_chain:
             self.chain = longest_chain
-            return True
-        return False
+            result = True
+        result = False
+        return result
 
 
 def main():
@@ -229,6 +238,11 @@ def main():
         endpoint='/connect_node',
         endpoint_name='connect_node',
         handler=request_service.connect_node
+    )
+    flask_wrapper.add_endpoint(
+        endpoint='/replace_chain',
+        endpoint_name='replace_chain',
+        handler=request_service.replace_chain
     )
     flask_wrapper.run()
 
