@@ -85,14 +85,28 @@ class Requests(object):
         json_request = request.get_json()
         transaction_keys = ["sender", "reciver", "amount"]
         if not all(key in json_request for key in transaction_keys):
-            response =  "Missing keys"
-        index = self.blockchain.add_transaction(
-            json_request["sender"],
-            json_request["reciver"],
-            json_request["amount"]
-        )
+            response = "Missing keys"
+        else:
+            index = self.blockchain.add_transaction(
+                json_request["sender"],
+                json_request["reciver"],
+                json_request["amount"]
+            )
+            response = {
+                "message": f"This transaction will be added to block {index}"
+            }
+        return json.dumps(response)
+    
+    def connect_node(self):
+        json_request = request.get_json()
+        nodes = json_request.get("nodes")
+        if nodes is None:
+            response = "No node"
+        for node in nodes:
+            self.blockchain.add_node(node)
         response = {
-            "message": f"This transaction will be added to block {index}"
+            "message": "All nodes connected",
+            "total_nodes": list(self.blockchain.node)
         }
         return json.dumps(response)
 
@@ -210,6 +224,11 @@ def main():
         endpoint='/add_transaction',
         endpoint_name='add_transaction',
         handler=request_service.add_transaction
+    )
+    flask_wrapper.add_endpoint(
+        endpoint='/connect_node',
+        endpoint_name='connect_node',
+        handler=request_service.connect_node
     )
     flask_wrapper.run()
 
