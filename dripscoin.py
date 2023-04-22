@@ -81,6 +81,21 @@ class Requests(object):
             self.blockchain.chain) else {"message": "block invalid!"}
         return json.dumps(response)
 
+    def add_transaction(self):
+        json_request = request.get_json()
+        transaction_keys = ["sender", "reciver", "amount"]
+        if not all(key in json_request for key in transaction_keys):
+            response =  "Missing keys"
+        index = self.blockchain.add_transaction(
+            json_request["sender"],
+            json_request["reciver"],
+            json_request["amount"]
+        )
+        response = {
+            "message": f"This transaction will be added to block {index}"
+        }
+        return json.dumps(response)
+
 
 class Blockchain(object):
     def __init__(self):
@@ -190,6 +205,11 @@ def main():
         endpoint='/is_valid',
         endpoint_name='is_valid',
         handler=request_service.is_valid
+    )
+    flask_wrapper.add_endpoint(
+        endpoint='/add_transaction',
+        endpoint_name='add_transaction',
+        handler=request_service.add_transaction
     )
     flask_wrapper.run()
 
