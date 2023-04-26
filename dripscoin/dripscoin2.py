@@ -36,7 +36,7 @@ class FlaskAppWrapper(object):
     def run(self):
         self.app.run(
             host="0.0.0.0",
-            port=5000
+            port=5002
         )
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None):
