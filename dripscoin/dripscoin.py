@@ -9,14 +9,15 @@ Created on Sun Jun 28 22:31:42 2020
 import datetime
 import hashlib
 import json
-import requests
 
-from uuid import uuid4
 from urllib.parse import urlparse
+from uuid import uuid4
+
+import requests
 from flask import Flask, Response, request
 
 
-class EndpointAction(object):
+class EndpointAction:
 
     def __init__(self, action):
         self.action = action
@@ -27,9 +28,7 @@ class EndpointAction(object):
         return self.response
 
 
-class FlaskAppWrapper(object):
-    app = None
-
+class FlaskAppWrapper:
     def __init__(self, name):
         self.app = Flask(name)
 
@@ -43,7 +42,7 @@ class FlaskAppWrapper(object):
         self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler))
 
 
-class Requests(object):
+class Requests:
     def __init__(self):
         self.blockchain = Blockchain()
         self.node_address = str(uuid4()).replace("-", "")
@@ -122,7 +121,7 @@ class Requests(object):
         return json.dumps(response)
 
 
-class Blockchain(object):
+class Blockchain:
     def __init__(self):
         self.chain = []
         self.transactions = []

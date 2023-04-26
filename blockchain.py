@@ -9,11 +9,11 @@ Created on Sun Jun 28 22:31:42 2020
 import datetime
 import hashlib
 import json
+
 from flask import Flask, Response
 
 
-class EndpointAction(object):
-
+class EndpointAction:
     def __init__(self, action):
         self.action = action
         self.response = Response(status=200, headers={})
@@ -23,9 +23,7 @@ class EndpointAction(object):
         return self.response
 
 
-class FlaskAppWrapper(object):
-    app = None
-
+class FlaskAppWrapper:
     def __init__(self, name):
         self.app = Flask(name)
 
@@ -36,7 +34,7 @@ class FlaskAppWrapper(object):
         self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler))
 
 
-class Requests(object):
+class Requests:
     def __init__(self):
         self.blockchain = Blockchain()
 
@@ -70,7 +68,7 @@ class Requests(object):
         return json.dumps(response)
 
 
-class Blockchain(object):
+class Blockchain:
     def __init__(self):
         self.chain = []
         self.create_block(1, "0")
