@@ -34,7 +34,10 @@ class FlaskAppWrapper(object):
         self.app = Flask(name)
 
     def run(self):
-        self.app.run()
+        self.app.run(
+            host="0.0.0.0",
+            port=5000
+        )
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None):
         self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler))
@@ -52,7 +55,7 @@ class Requests(object):
 
         self.blockchain.add_transaction(
             sender=self.node_address,
-            reciver="Lucs1590",
+            receiver="Lucs1590",
             amount=1
         )
 
@@ -83,13 +86,13 @@ class Requests(object):
 
     def add_transaction(self):
         json_request = request.get_json()
-        transaction_keys = ["sender", "reciver", "amount"]
+        transaction_keys = ["sender", "receiver", "amount"]
         if not all(key in json_request for key in transaction_keys):
             response = "Missing keys"
         else:
             index = self.blockchain.add_transaction(
                 json_request["sender"],
-                json_request["reciver"],
+                json_request["receiver"],
                 json_request["amount"]
             )
             response = {
@@ -176,10 +179,10 @@ class Blockchain(object):
             i += 1
         return True
 
-    def add_transaction(self, sender, reciver, amount):
+    def add_transaction(self, sender, receiver, amount):
         self.transactions.append({
             "sender": sender,
-            "reciver": reciver,
+            "receiver": receiver,
             "amount": amount
         })
         prev_block = self.get_prev_block()
@@ -205,9 +208,8 @@ class Blockchain(object):
 
         if longest_chain:
             self.chain = longest_chain
-            result = True
-        result = False
-        return result
+            return True
+        return False
 
 
 def main():
